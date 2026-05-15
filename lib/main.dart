@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:aether_project/core/theme/app_theme.dart';
+import 'package:aether_project/features/world_event/presentation/pages/world_event_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -13,14 +15,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'AETHER',
-    debugShowCheckedModeBanner: false,
-     theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ), home: const Scaffold(body: Center(child: Text('AETHER'))
-    ));
+    return MaterialApp(
+      title: 'AETHER',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.dark, // Default to dark mode for MMORPG feel
+      home: const WorldEventScreen(),
+    );
   }
 }
