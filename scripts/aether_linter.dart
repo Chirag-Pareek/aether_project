@@ -1,10 +1,10 @@
+// ignore_for_file: avoid_print
 import 'dart:io';
 
 void main() async {
   print('===================================================');
   print('🛡️  Aether Architecture Linter (Diagnostic Mode) 🛡️');
-  print('===================================================
-');
+  print('===================================================');
 
   final pubspec = File('pubspec.yaml');
   if (!pubspec.existsSync()) {
@@ -17,10 +17,13 @@ void main() async {
   final out = StringBuffer();
   out.writeln('# Aether Diagnostic Report\n');
 
+  final isWindows = Platform.isWindows;
+  final flutterCmd = isWindows ? 'flutter.bat' : 'flutter';
+
   // 1. Strict Lints
   print('⏳ Running Diagnostic: Code Quality (flutter analyze)...');
   try {
-    final analyze = await Process.run('flutter', ['analyze']);
+    final analyze = await Process.run(flutterCmd, ['analyze']);
     if (analyze.exitCode == 0) {
       print('✅ Linter: PASS');
       out.writeln('### 1. Code Quality');
@@ -47,7 +50,7 @@ void main() async {
     out.writeln('\n💡 **HEALING ACTION:** You must place the provided `raid_concurrency_test.dart` file in the `test/` directory.');
   } else {
     try {
-      final testResult = await Process.run('flutter', ['test', 'test/raid_concurrency_test.dart']);
+      final testResult = await Process.run(flutterCmd, ['test', 'test/raid_concurrency_test.dart']);
       if (testResult.exitCode == 0) {
         print('✅ Tests: PASS');
         out.writeln('\n### 2. Concurrency Outcome');

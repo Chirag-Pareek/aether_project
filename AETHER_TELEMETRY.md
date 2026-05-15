@@ -6,16 +6,14 @@
 ✅ Atomic operations detected (`runTransaction`: 5, `increment`: 2)
 
 ### UI Performance
-- `setState`: 0 | `ValueNotifier`: 3 | `RepaintBoundary`: 1
+- `setState`: 1 | `ValueNotifier`: 2 | `RepaintBoundary`: 1
 ✅ Targeted repaints detected.
 
 ## 2. Developer Thought Log
-- **world_event_bloc.dart** (Line 24): Subscribing to real-time Firestore stream for low-latency UI sync.
+- **world_event_bloc.dart** (Line 23): Subscribing to real-time Firestore stream for low-latency UI sync.
 - **raid_service.dart** (Line 12): Using a Transaction to ensure atomic integrity in high-concurrency MMO scenarios.
 - **raid_service.dart** (Line 32): Successfully reserved slot. Transaction guaranteed exactly 1 winner for this slot.
-- **countdown_timer.dart** (Line 8): ValueNotifier + ValueListenableBuilder = surgical repaints.
-- **countdown_timer.dart** (Line 33): High-frequency 100ms heartbeat for drift-free UI updates.
-- **countdown_timer.dart** (Line 71): isolates high-frequency text repaints
 - **raid_service.dart** (Line 4): Using runTransaction for atomic read-check-write.
 - **raid_service.dart** (Line 12): Local synchronization lock to ensure serial execution
 - **raid_service.dart** (Line 45): FieldValue.increment is atomic server-side.
+- **raid_service.dart** (Line 58): limit(50) caps reads to last 50 docs per listener.

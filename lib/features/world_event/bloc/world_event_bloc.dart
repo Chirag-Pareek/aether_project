@@ -6,12 +6,11 @@ part 'world_event_event.dart';
 part 'world_event_state.dart';
 
 class WorldEventBloc extends Bloc<WorldEventEvent, WorldEventState> {
-  final RaidService _raidService;
+  final RaidService raidService;
   StreamSubscription? _raidSubscription;
 
-  WorldEventBloc({required RaidService raidService})
-      : _raidService = raidService,
-        super(const WorldEventState()) {
+  WorldEventBloc({required this.raidService})
+      : super(const WorldEventState()) {
     on<WorldEventSubscriptionRequested>(_onSubscriptionRequested);
     on<WorldEventDataUpdated>(_onDataUpdated);
     on<WorldEventJoinRequested>(_onJoinRequested);
@@ -24,7 +23,7 @@ class WorldEventBloc extends Bloc<WorldEventEvent, WorldEventState> {
     // @AETHER: Subscribing to real-time Firestore stream for low-latency UI sync.
     await _raidSubscription?.cancel();
     
-    _raidSubscription = _raidService.raidStream.listen((snapshot) {
+    _raidSubscription = raidService.raidStream.listen((snapshot) {
       if (snapshot.exists) {
         final data = snapshot.data()!;
         add(WorldEventDataUpdated(
@@ -53,7 +52,7 @@ class WorldEventBloc extends Bloc<WorldEventEvent, WorldEventState> {
     
     emit(state.copyWith(status: WorldEventStatus.loading));
     
-    final success = await _raidService.joinRaid(userId: event.userId);
+    final success = await raidService.joinRaid(userId: event.userId);
     
     if (success) {
       emit(state.copyWith(

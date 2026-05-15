@@ -53,4 +53,28 @@ class RaidService {
   /// Stream of raid data for real-time UI updates
   Stream<DocumentSnapshot<Map<String, dynamic>>> get raidStream =>
       _firestore.collection('events').doc('dragon_raid').snapshots();
+
+  /// Real-time stream of the last 50 messages
+  // @AETHER: limit(50) caps reads to last 50 docs per listener.
+  // 10k users * 50 reads is manageable. Full collection = bankruptcy.
+  Stream<QuerySnapshot<Map<String, dynamic>>> get chatStream => _firestore
+      .collection('events')
+      .doc('dragon_raid')
+      .collection('messages')
+      .orderBy('timestamp', descending: true)
+      .limit(50)
+      .snapshots();
+
+  /// Sends a message using Server Timestamps to prevent clock drift.
+  Future<void> sendMessage(String text, String userId) async {
+    await _firestore
+        .collection('events')
+        .doc('dragon_raid')
+        .collection('messages')
+        .add({
+      'text': text,
+      'userId': userId,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
 }

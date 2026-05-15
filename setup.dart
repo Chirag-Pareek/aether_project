@@ -1,20 +1,21 @@
+﻿// ignore_for_file: avoid_print
 import 'dart:io';
 
 void main() async {
   print('===================================================');
-  print('🛠️  Aether Environment Setup');
+  print('ðŸ› ï¸  Aether Environment Setup');
   print('===================================================');
 
   // 1. Validate Root Directory
   final pubspec = File('pubspec.yaml');
   if (!pubspec.existsSync()) {
-    print('❌ ERROR: pubspec.yaml not found.');
-    print('💡 HEALING ACTION: You must run this script from the root of your Flutter project.');
+    print('âŒ ERROR: pubspec.yaml not found.');
+    print('ðŸ’¡ HEALING ACTION: You must run this script from the root of your Flutter project.');
     exit(1);
   }
 
   // 2. Inject Required Dependencies
-  print('📦 Checking testing & linting dependencies...');
+  print('ðŸ“¦ Checking testing & linting dependencies...');
   final pubspecContent = pubspec.readAsStringSync();
   final missingDeps = <String>[];
   
@@ -22,26 +23,26 @@ void main() async {
   if (!pubspecContent.contains('flutter_lints:')) missingDeps.add('flutter_lints');
 
   if (missingDeps.isNotEmpty) {
-    print('⚙️  Injecting missing dev_dependencies: ${missingDeps.join(', ')}...');
+    print('âš™ï¸  Injecting missing dev_dependencies: ${missingDeps.join(', ')}...');
     final result = await Process.run('flutter', ['pub', 'add', '--dev', ...missingDeps]);
     if (result.exitCode != 0) {
-      print('❌ ERROR: Failed to add dependencies. Please add them manually.');
+      print('âŒ ERROR: Failed to add dependencies. Please add them manually.');
       print(result.stderr);
     } else {
-      print('✅ Dependencies injected successfully.');
+      print('âœ… Dependencies injected successfully.');
     }
   } else {
-    print('✅ All necessary dev_dependencies are present.');
+    print('âœ… All necessary dev_dependencies are present.');
   }
 
   // 3. Ensure Git is present and healthy
   final hookDir = Directory('.git/hooks');
   if (!hookDir.existsSync()) {
-    print('⚠️  No .git directory found. Initializing git...');
+    print('âš ï¸  No .git directory found. Initializing git...');
     final gitInit = await Process.run('git', ['init']);
     if (gitInit.exitCode != 0) {
-      print('❌ ERROR: Git is not installed or accessible. The telemetry hook cannot be installed.');
-      print('💡 HEALING ACTION: Install Git, run "git init", and re-run this script.');
+      print('âŒ ERROR: Git is not installed or accessible. The telemetry hook cannot be installed.');
+      print('ðŸ’¡ HEALING ACTION: Install Git, run "git init", and re-run this script.');
       exit(1);
     }
     hookDir.createSync(recursive: true);
@@ -58,11 +59,11 @@ void main() async {
   if (hookFile.existsSync()) {
     final currentHook = hookFile.readAsStringSync();
     if (!currentHook.contains('aether_compiler.dart')) {
-      print('🔗 Appending Aether telemetry to existing pre-commit hook...');
+      print('ðŸ”— Appending Aether telemetry to existing pre-commit hook...');
       hookFile.writeAsStringSync('\n# Aether Telemetry\n$hookCommand\n', mode: FileMode.append);
     }
   } else {
-    print('🔗 Creating new pre-commit hook...');
+    print('ðŸ”— Creating new pre-commit hook...');
     hookFile.writeAsStringSync('#!/bin/sh\n# Aether Telemetry\n$hookCommand\n');
   }
 
@@ -70,7 +71,7 @@ void main() async {
     await Process.run('chmod', ['+x', '.git/hooks/pre-commit']);
   }
 
-  print('\n✅ SETUP COMPLETE. The Aether "Flight Recorder" is active.');
+  print('\nâœ… SETUP COMPLETE. The Aether "Flight Recorder" is active.');
   print('-> You can now write code normally. Your architectural decisions will be safely logged on commit.');
   print('===================================================');
 }
@@ -119,18 +120,18 @@ void main() {
   
   output.writeln('## 1. Architectural Fingerprint');
   if (transactionCount > 0 || incrementCount > 0) {
-    output.writeln('✅ Atomic operations detected (`runTransaction`: $transactionCount, `increment`: $incrementCount)');
+    output.writeln('âœ… Atomic operations detected (`runTransaction`: $transactionCount, `increment`: $incrementCount)');
   } else {
-    output.writeln('❌ No atomic operations detected.');
+    output.writeln('âŒ No atomic operations detected.');
   }
 
   output.writeln('\n### UI Performance');
   output.writeln('- `setState`: $setStateCount | `ValueNotifier`: $valueNotifierCount | `RepaintBoundary`: $repaintBoundaryCount');
   
   if (valueNotifierCount > 0 || repaintBoundaryCount > 0) {
-    output.writeln('✅ Targeted repaints detected.');
+    output.writeln('âœ… Targeted repaints detected.');
   } else if (setStateCount > 3) {
-    output.writeln('⚠️ High `setState` usage without localized rebuilds.');
+    output.writeln('âš ï¸ High `setState` usage without localized rebuilds.');
   }
 
   output.writeln('\n## 2. Developer Thought Log');

@@ -1,128 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:aether_project/core/theme/app_colors.dart';
 import 'package:aether_project/core/theme/app_spacing.dart';
 import 'package:aether_project/core/theme/app_typography.dart';
 
-/// Main ThemeData mapped from Watchflo tokens.
 abstract final class AppTheme {
-  static ThemeData get light => _buildTheme(AppColors.light, Brightness.light);
-  static ThemeData get dark => _buildTheme(AppColors.dark, Brightness.dark);
+  static ThemeData get rpgTheme => _buildTheme();
 
-  static ThemeData _buildTheme(AppColors colors, Brightness brightness) {
-    final colorScheme =
-        ColorScheme.fromSeed(
-          brightness: brightness,
-          seedColor: colors.primary,
-        ).copyWith(
-          primary: colors.primary,
-          onPrimary: colors.onPrimary,
-          secondary: colors.body,
-          onSecondary: colors.onPrimary,
-          surface: colors.surfaceCard,
-          onSurface: colors.ink,
-          error: colors.semanticError,
-          onError: colors.onPrimary,
-        );
+  static ThemeData _buildTheme() {
+    final colorScheme = ColorScheme.fromSeed(
+      brightness: Brightness.light,
+      seedColor: AppColors.panelBackground,
+    ).copyWith(
+      primary: AppColors.textPrimary,
+      onPrimary: AppColors.panelBackground,
+      secondary: AppColors.buttonBg,
+      onSecondary: AppColors.textPrimary,
+      surface: AppColors.panelBackground,
+      onSurface: AppColors.textPrimary,
+      error: AppColors.textAccent,
+      onError: Colors.white,
+    );
 
     final base = ThemeData(
       useMaterial3: true,
-      brightness: brightness,
-      scaffoldBackgroundColor: colors.canvas,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: AppColors.panelBackground,
       colorScheme: colorScheme,
-      canvasColor: colors.canvas,
-      dividerColor: colors.hairline,
+      canvasColor: AppColors.panelBackground,
+      dividerColor: AppColors.panelInnerBorder,
     );
 
-    final textTheme = _buildTextTheme().apply(
-      bodyColor: colors.body,
-      displayColor: colors.ink,
+    final textTheme = GoogleFonts.vt323TextTheme(base.textTheme).apply(
+      bodyColor: AppColors.textPrimary,
+      displayColor: AppColors.textPrimary,
     );
 
     return base.copyWith(
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: colors.canvas,
-        foregroundColor: colors.ink,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppColors.textPrimary,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        titleTextStyle: AppTypography.navLink.copyWith(color: colors.ink),
+        titleTextStyle: AppTypography.navLink.copyWith(color: AppColors.textPrimary),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: colors.surfaceStrong,
-        contentTextStyle: AppTypography.bodyMd.copyWith(color: colors.ink),
+        backgroundColor: AppColors.buttonBg,
+        contentTextStyle: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.roundedXl),
-          side: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+          side: const BorderSide(color: AppColors.buttonBorder, width: 2),
         ),
         elevation: 0,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colors.surfaceStrong,
-        hintStyle: AppTypography.bodyMd.copyWith(color: colors.body),
+        fillColor: AppColors.chatInputBg,
+        hintStyle: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary.withValues(alpha: 0.5)),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.base,
           vertical: AppSpacing.sm,
         ),
-        constraints: const BoxConstraints(minHeight: AppSpacing.textInputHeight),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.roundedPill),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+          borderSide: const BorderSide(color: AppColors.panelInnerBorder, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.roundedPill),
-          borderSide: BorderSide(color: colors.hairlineStrong, width: 1),
+          borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+          borderSide: const BorderSide(color: AppColors.panelBorder, width: 2),
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.roundedPill),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+          borderSide: const BorderSide(color: AppColors.panelInnerBorder, width: 2),
         ),
       ),
       cardTheme: CardThemeData(
-        color: colors.surfaceCard,
+        color: AppColors.panelBackground,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.roundedXl),
-          side: BorderSide(color: colors.hairline),
+          borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+          side: const BorderSide(color: AppColors.panelBorder, width: 4),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size(0, AppSpacing.buttonHeight),
-          fixedSize: const Size.fromHeight(AppSpacing.buttonHeight),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.xs,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.roundedPill),
+            borderRadius: BorderRadius.circular(AppSpacing.roundedSm),
+            side: const BorderSide(color: AppColors.buttonBorder, width: 2),
           ),
-          backgroundColor: colors.primary,
-          foregroundColor: colors.onPrimary,
+          backgroundColor: AppColors.buttonBg,
+          foregroundColor: AppColors.textPrimary,
           textStyle: AppTypography.button,
+          elevation: 2,
+          shadowColor: AppColors.buttonShadow,
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(0, AppSpacing.buttonHeight),
-          fixedSize: const Size.fromHeight(AppSpacing.buttonHeight),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.xs,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.roundedPill),
-          ),
-          side: BorderSide(color: colors.hairlineStrong),
-          foregroundColor: colors.ink,
-          backgroundColor: colors.surfaceStrong,
-          textStyle: AppTypography.button,
-        ),
-      ),
-      extensions: <ThemeExtension<dynamic>>[colors],
     );
   }
 
@@ -143,45 +124,6 @@ abstract final class AppTheme {
       labelLarge: AppTypography.button,
       labelMedium: AppTypography.navLink,
       labelSmall: AppTypography.captionUppercase,
-    );
-  }
-
-  static TextStyle serif({
-    required double fontSize,
-    required Color color,
-    FontWeight fontWeight = FontWeight.w300,
-    double? height,
-    double? letterSpacing,
-  }) {
-    final resolvedHeight =
-        height ??
-        (fontSize >= 60
-            ? 1.05
-            : fontSize >= 46
-            ? 1.08
-            : fontSize >= 34
-            ? 1.17
-            : fontSize >= 30
-            ? 1.13
-            : 1.2);
-    final resolvedLetterSpacing =
-        letterSpacing ??
-        (fontSize >= 60
-            ? -1.92
-            : fontSize >= 46
-            ? -0.96
-            : fontSize >= 34
-            ? -0.36
-            : fontSize >= 30
-            ? -0.32
-            : 0.0);
-
-    return AppTypography.displayCustom(
-      fontSize: fontSize,
-      color: color,
-      fontWeight: fontWeight,
-      height: resolvedHeight,
-      letterSpacing: resolvedLetterSpacing,
     );
   }
 }

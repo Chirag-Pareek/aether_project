@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:aether_project/core/theme/app_colors.dart';
 import 'package:aether_project/core/theme/app_typography.dart';
 
-// @AETHER: ValueNotifier + ValueListenableBuilder = surgical repaints.
-// setState here would rebuild the entire screen 10 times per second.
 class CountdownTimer extends StatefulWidget {
   final DateTime targetTime;
 
@@ -30,7 +27,6 @@ class _CountdownTimerState extends State<CountdownTimer> {
       widget.targetTime.difference(DateTime.now()),
     );
     
-    // @AETHER: High-frequency 100ms heartbeat for drift-free UI updates.
     _timer = Timer.periodic(
       const Duration(milliseconds: 100),
       (_) {
@@ -49,39 +45,43 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Pulse indicator proof
-        _PulseIndicator(remaining: _remaining),
-        const SizedBox(width: 12),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'EVENT STARTS IN',
-              style: AppTypography.captionUppercase.copyWith(
-                color: colors.onDarkSoft,
-                fontSize: 10,
+        Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'EVENT STARTS IN',
+                style: AppTypography.captionUppercase.copyWith(
+                  color: AppColors.onDarkSoft,
+                  fontSize: 10,
+                ),
               ),
-            ),
-            RepaintBoundary( // @AETHER: isolates high-frequency text repaints
-              child: ValueListenableBuilder<Duration>(
-                valueListenable: _remaining,
-                builder: (_, dur, __) => Text(
-                  _format(dur),
-                  style: AppTypography.displayMd.copyWith(
-                    color: colors.primary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+              RepaintBoundary(
+                child: ValueListenableBuilder<Duration>(
+                  valueListenable: _remaining,
+                  builder: (context, dur, child) => FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      _format(dur),
+                      style: AppTypography.displayMd.copyWith(
+                        color: AppColors.textAccent,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        const SizedBox(width: 12),
+        _PulseIndicator(remaining: _remaining),
       ],
     );
   }
@@ -101,7 +101,6 @@ class _PulseIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
     return ValueListenableBuilder<Duration>(
       valueListenable: remaining,
       builder: (context, duration, _) {
@@ -111,11 +110,11 @@ class _PulseIndicator extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isOn ? colors.primary : colors.primary.withOpacity(0.2),
+            color: isOn ? AppColors.textAccent : AppColors.textAccent.withValues(alpha: 0.2),
             boxShadow: [
               if (isOn)
                 BoxShadow(
-                  color: colors.primary.withOpacity(0.5),
+                  color: AppColors.textAccent.withValues(alpha: 0.5),
                   blurRadius: 10,
                 ),
             ],
