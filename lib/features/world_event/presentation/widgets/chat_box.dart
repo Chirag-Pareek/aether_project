@@ -163,7 +163,7 @@ class _ChatBubbleState extends State<_ChatBubble> with SingleTickerProviderState
       if (timestamp != null) {
         final diff = DateTime.now().difference(timestamp.toDate());
         if (diff.inSeconds > 5) {
-          isNew = false; // Don't animate old history messages
+          isNew = false;
         }
       }
       _animatedIds.add(widget.messageId);

@@ -41,16 +41,13 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
   final List<int> _slotCharacterIndices = [];
   final Random _random = Random();
 
-  // The sprite sheet has front-facing characters in a grid.
-  // Each character is 16x16 in a 256x256 sheet.
-  // Bottom-right quadrant has standing poses: 8 cols x 7 rows = 56 characters
-  // Starting at pixel (128, 128) in the sheet.
+  // Configuration for the character sprite sheet
   static const int _spriteSize = 16;
   static const int _sheetSize = 256;
-  static const int _gridStartX = 128; // start X of character grid
-  static const int _gridStartY = 128; // start Y of character grid 
+  static const int _gridStartX = 128; // X-offset for the standing character grid
+  static const int _gridStartY = 128; // Y-offset for the standing character grid 
   static const int _gridCols = 8;
-  static const int _totalCharacters = 56; // 8 * 7
+  static const int _totalCharacters = 56;
 
   @override
   void initState() {
@@ -59,7 +56,8 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    // Scale 1.0 -> 1.5 -> 1.0
+    
+    // Dragon tap animation: Scale 1.0 -> 1.5 -> 1.0
     _scaleAnimation = TweenSequence([
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.5), weight: 1),
       TweenSequenceItem(tween: Tween(begin: 1.5, end: 1.0), weight: 1),
@@ -79,15 +77,14 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
     }
   }
 
+  /// Extracts a specific character sprite from the sheet using coordinate mapping
   Widget _buildCharacterSprite(int charIndex) {
     final int col = charIndex % _gridCols;
     final int row = charIndex ~/ _gridCols;
     
-    // Calculate the source rect position in the sprite sheet
     final double srcX = (_gridStartX + col * _spriteSize).toDouble();
     final double srcY = (_gridStartY + row * _spriteSize).toDouble();
     
-    // Use FittedBox + ClipRect + Align to crop the exact character
     return ClipRect(
       child: SizedBox(
         width: 36,
@@ -96,7 +93,6 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
           fit: BoxFit.cover,
           child: Align(
             alignment: Alignment(
-              // Map srcX to -1..1 range
               -1.0 + (2.0 * srcX / (_sheetSize - _spriteSize)),
               -1.0 + (2.0 * srcY / (_sheetSize - _spriteSize)),
             ),
@@ -104,7 +100,7 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
             heightFactor: _spriteSize / _sheetSize,
             child: Image.asset(
               'assets/Characters.png',
-              filterQuality: FilterQuality.none, // Keep pixel art crisp
+              filterQuality: FilterQuality.none,
             ),
           ),
         ),
@@ -174,7 +170,6 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           children: [
-            // Header
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -202,11 +197,7 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
                   ),
                 ),
                 BouncingButton(
-                  onTap: () {
-                    setState(() {
-                      _isMuted = !_isMuted;
-                    });
-                  },
+                  onTap: () => setState(() => _isMuted = !_isMuted),
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     margin: const EdgeInsets.only(right: 8),
@@ -253,7 +244,6 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
               child: Divider(color: AppColors.panelBorder, thickness: 2),
             ),
             
-            // Dragon & Info
             Row(
               children: [
                 GestureDetector(
@@ -302,13 +292,12 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
             
             const SizedBox(height: AppSpacing.md),
             
-            // Slots
+            // Participatnt Slots (Real-time sync)
             BlocBuilder<WorldEventBloc, WorldEventState>(
               builder: (context, state) {
                 int visualSlots = state.maxSlots;
                 int filledBoxes = state.slotsFilled;
 
-                // Ensure we have enough random character indices
                 while (_slotCharacterIndices.length < filledBoxes) {
                   _slotCharacterIndices.add(_random.nextInt(_totalCharacters));
                 }
@@ -342,7 +331,7 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
             
             const SizedBox(height: AppSpacing.lg),
             
-            // Join Button
+            // Interaction Area
             BlocBuilder<WorldEventBloc, WorldEventState>(
               builder: (context, state) {
                 final bool isFull = state.slotsFilled >= state.maxSlots;

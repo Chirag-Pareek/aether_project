@@ -6,10 +6,10 @@ void main() async {
   print('🛡️  Aether Architecture Linter (Diagnostic Mode) 🛡️');
   print('===================================================');
 
+  // Validate project root
   final pubspec = File('pubspec.yaml');
   if (!pubspec.existsSync()) {
-    print('❌ CRITICAL ERROR: Not running in a Flutter project root.');
-    print('💡 HEALING: `cd` into your project directory before running this.');
+    print('❌ ERROR: Not in a Flutter project root.');
     return;
   }
 
@@ -20,49 +20,45 @@ void main() async {
   final isWindows = Platform.isWindows;
   final flutterCmd = isWindows ? 'flutter.bat' : 'flutter';
 
-  // 1. Strict Lints
-  print('⏳ Running Diagnostic: Code Quality (flutter analyze)...');
+  // Static Analysis Check
+  print('⏳ Running Diagnostic: Code Quality...');
   try {
     final analyze = await Process.run(flutterCmd, ['analyze']);
+    out.writeln('### 1. Code Quality');
     if (analyze.exitCode == 0) {
-      print('✅ Linter: PASS');
-      out.writeln('### 1. Code Quality');
+      print('✅ Code Quality: PASS');
       out.writeln('✅ **PASS:** Zero static analysis warnings.');
     } else {
-      print('❌ Linter: FAIL');
-      out.writeln('### 1. Code Quality');
+      print('❌ Code Quality: FAIL');
       out.writeln('❌ **FAIL:** Static analysis found issues.');
-      out.writeln('\n💡 **HEALING ACTION:** Look at the terminal output of `flutter analyze` and resolve the warnings. Did you specify types? Did you await all Futures?');
+      out.writeln('\n💡 **RESOLUTION:** Run `flutter analyze` and resolve all warnings.');
     }
   } catch (e) {
-    print('❌ CRITICAL ERROR: Could not run "flutter analyze". Is Flutter in your PATH?');
+    print('❌ ERROR: Could not run static analysis.');
     return;
   }
 
-  // 2. Outcome Verification (Tests)
-  print('⏳ Running Diagnostic: Concurrency Check (flutter test)...');
+  // Concurrency Stress Test
+  print('⏳ Running Diagnostic: Concurrency Verification...');
   final testFile = File('test/raid_concurrency_test.dart');
   
+  out.writeln('\n### 2. Concurrency Outcome');
   if (!testFile.existsSync()) {
-    print('❌ Tests: FAIL (raid_concurrency_test.dart is missing)');
-    out.writeln('\n### 2. Concurrency Outcome');
-    out.writeln('❌ **FAIL:** Missing test file.');
-    out.writeln('\n💡 **HEALING ACTION:** You must place the provided `raid_concurrency_test.dart` file in the `test/` directory.');
+    print('❌ Concurrency: FAIL (Missing test file)');
+    out.writeln('❌ **FAIL:** Missing `test/raid_concurrency_test.dart`.');
   } else {
     try {
       final testResult = await Process.run(flutterCmd, ['test', 'test/raid_concurrency_test.dart']);
       if (testResult.exitCode == 0) {
-        print('✅ Tests: PASS');
-        out.writeln('\n### 2. Concurrency Outcome');
-        out.writeln('✅ **PASS:** Your architecture survived the Thundering Herd.');
+        print('✅ Concurrency: PASS');
+        out.writeln('✅ **PASS:** Architecture handled high-concurrency race conditions.');
       } else {
-        print('❌ Tests: FAIL');
-        out.writeln('\n### 2. Concurrency Outcome');
-        out.writeln('❌ **FAIL:** The 50-request blast failed to yield exactly 15 slots.');
-        out.writeln('\n💡 **HEALING ACTION:** Read your test failure logs. Did your `joinRaid()` method correctly handle the race condition? Are you using locks or transactions?');
+        print('❌ Concurrency: FAIL');
+        out.writeln('❌ **FAIL:** The concurrency test failed to maintain data integrity.');
+        out.writeln('\n💡 **RESOLUTION:** Ensure `joinRaid()` uses atomic transactions or locks.');
       }
     } catch (e) {
-      print('❌ CRITICAL ERROR: Could not execute "flutter test".');
+      print('❌ ERROR: Could not execute concurrency tests.');
     }
   }
 
@@ -70,9 +66,8 @@ void main() async {
     reportFile.writeAsStringSync(out.toString());
     print('\n===================================================');
     print('📄 Report saved to ARCHITECTURE_REPORT.md');
-    print('👀 Read the report for HEALING ACTIONS to fix your architecture.');
     print('===================================================');
   } catch (e) {
-    print('❌ Could not write to ARCHITECTURE_REPORT.md. Check file permissions.');
+    print('❌ Could not write to report file.');
   }
 }

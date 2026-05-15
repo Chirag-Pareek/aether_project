@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// @AETHER: Using runTransaction for atomic read-check-write.
-// A plain get()+update() would lose the race at high concurrency.
 class RaidService {
   RaidService({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
   
-  // @AETHER: Local synchronization lock to ensure serial execution 
-  // in mock environments that don't perfectly handle transaction retries.
+  // Future-based lock to prevent race conditions during transaction retries in local mock environments.
   static Future<void> _lock = Future.value();
 
   Future<bool> joinRaid({required String userId}) async {
@@ -54,9 +51,7 @@ class RaidService {
   Stream<DocumentSnapshot<Map<String, dynamic>>> get raidStream =>
       _firestore.collection('events').doc('dragon_raid').snapshots();
 
-  /// Real-time stream of the last 50 messages
-  // @AETHER: limit(50) caps reads to last 50 docs per listener.
-  // 10k users * 50 reads is manageable. Full collection = bankruptcy.
+  /// Real-time stream of the last 50 messages to maintain performance and control read costs.
   Stream<QuerySnapshot<Map<String, dynamic>>> get chatStream => _firestore
       .collection('events')
       .doc('dragon_raid')

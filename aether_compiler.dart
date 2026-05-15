@@ -11,6 +11,7 @@ void main() {
   int incrementCount = 0;
   List<String> thoughts = [];
 
+  // Scan the lib directory for architectural patterns and developer thoughts
   for (var entity in dir.listSync(recursive: true)) {
     if (entity is File && entity.path.endsWith('.dart')) {
       try {
@@ -18,18 +19,20 @@ void main() {
         for (int i = 0; i < lines.length; i++) {
           final line = lines[i].trim();
           
+          // Track architectural metrics: UI rebuild patterns and atomic operations
           if (line.contains('setState(')) setStateCount++;
           if (line.contains('ValueNotifier')) valueNotifierCount++;
           if (line.contains('RepaintBoundary')) repaintBoundaryCount++;
           if (line.contains('runTransaction') || line.contains('Transaction(')) transactionCount++;
           if (line.contains('FieldValue.increment')) incrementCount++;
           
+          // Capture developer thoughts marked with @AETHER for the report
           if (line.contains('// @AETHER:')) {
             thoughts.add('- **${entity.uri.pathSegments.last}** (Line ${i+1}): ${line.substring(line.indexOf('// @AETHER:') + 11).trim()}');
           }
         }
       } catch (_) {
-        // Catch read errors (e.g. encoding issues) and skip gracefully
+        // Skip files that cannot be read (e.g., encoding issues)
       }
     }
   }

@@ -20,9 +20,9 @@ class WorldEventBloc extends Bloc<WorldEventEvent, WorldEventState> {
     WorldEventSubscriptionRequested event,
     Emitter<WorldEventState> emit,
   ) async {
-    // @AETHER: Subscribing to real-time Firestore stream for low-latency UI sync.
     await _raidSubscription?.cancel();
     
+    // Subscribe to Firestore updates for real-time slot synchronization
     _raidSubscription = raidService.raidStream.listen((snapshot) {
       if (snapshot.exists) {
         final data = snapshot.data()!;

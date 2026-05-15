@@ -5,7 +5,8 @@
 *.swp
 .DS_Store
 Thumbs.db
-.env*
+.env
+!.env.example
 .atom/
 .build/
 .buildlog/
