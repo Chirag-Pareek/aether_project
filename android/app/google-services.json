@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "502336955634",
+    "project_id": "aether-3ed8a",
+    "storage_bucket": "aether-3ed8a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502336955634:android:c4b5a98c8fe5cbfc559c6b",
+        "android_client_info": {
+          "package_name": "com.example.aether_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4L9Tz6DdK7qTzN-eXOFINhvSqvVkXU_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
