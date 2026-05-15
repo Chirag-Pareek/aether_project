@@ -50,3 +50,7 @@ app.*.map.json
 # google-services.json
 # GoogleService-Info.plist
 # lib/firebase_options.dart
+
+
+# Aether Initialization Temp
+.aether_init_temp/
