@@ -50,7 +50,6 @@ class _WorldEventViewState extends State<WorldEventView> with SingleTickerProvid
   static const int _gridStartX = 128; // start X of character grid
   static const int _gridStartY = 128; // start Y of character grid 
   static const int _gridCols = 8;
-  static const int _gridRows = 7;
   static const int _totalCharacters = 56; // 8 * 7
 
   @override

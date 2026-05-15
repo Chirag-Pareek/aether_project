@@ -106,24 +106,4 @@ abstract final class AppTheme {
       ),
     );
   }
-
-  static TextTheme _buildTextTheme() {
-    return TextTheme(
-      displayLarge: AppTypography.displayMega,
-      displayMedium: AppTypography.displayXl,
-      displaySmall: AppTypography.displayLg,
-      headlineLarge: AppTypography.displayMd,
-      headlineMedium: AppTypography.displaySm,
-      headlineSmall: AppTypography.titleMd,
-      titleLarge: AppTypography.titleMd,
-      titleMedium: AppTypography.titleSm,
-      titleSmall: AppTypography.caption,
-      bodyLarge: AppTypography.bodyMd,
-      bodyMedium: AppTypography.bodyMd,
-      bodySmall: AppTypography.bodySm,
-      labelLarge: AppTypography.button,
-      labelMedium: AppTypography.navLink,
-      labelSmall: AppTypography.captionUppercase,
-    );
-  }
 }

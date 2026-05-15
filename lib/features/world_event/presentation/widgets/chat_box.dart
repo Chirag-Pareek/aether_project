@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -35,7 +36,7 @@ class _ChatBoxState extends State<ChatBox> {
   void _sendMessage() {
     if (_controller.text.trim().isNotEmpty) {
       SystemSound.play(SystemSoundType.click);
-      widget.raidService.sendMessage(_controller.text.trim(), widget.userId);
+      unawaited(widget.raidService.sendMessage(_controller.text.trim(), widget.userId));
       _controller.clear();
     }
   }
@@ -189,7 +190,6 @@ class _ChatBubbleState extends State<_ChatBubble> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    final userId = widget.data['userId'] as String? ?? '';
     final text = widget.data['text'] as String? ?? '';
     
     final colors = [
